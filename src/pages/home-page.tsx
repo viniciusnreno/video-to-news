@@ -4,7 +4,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import { getId } from "../../utils/getId";
 import { schema } from "../../utils/schema";
-import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
@@ -57,9 +56,7 @@ const HomePage: React.FC = () => {
   return (
     <div className="container md:w-[530px] mx-auto text-center mt-8 p-4">
       <div className="bg-gray-100 p-10 rounded-lg opacity-90">
-        <h1 className="font-bold text-2xl md:text-3xl mb-4">
-          Youtube link to MP3
-        </h1>
+        <h1 className="font-bold text-2xl md:text-3xl mb-4">Video to News</h1>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="flex gap-4 items-end justify-center ">
             <div className="grid w-full max-w-sm items-center gap-1.5">

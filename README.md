@@ -73,7 +73,7 @@ Este projeto é uma aplicação frontend que permite aos usuários gerar automat
 
 ## 🌐 Link Hospedado
 
-Acesse a versão online do projeto: [https://video-to-news.vercel.vercel.app/](https://video-to-news.vercel.vercel.app/)
+Acesse a versão online do projeto: [https://video-to-news.vercel.app/](https://video-to-news.vercel.app/)
 
 ## 🌟 Contribuição
 

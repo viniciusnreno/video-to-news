@@ -1,0 +1,3 @@
+export const transcriptionMock = {
+  text: "Nessa sexta-feira, dia 19, tivemos um apagão global de tecnologia que afetou os voos dos Estados Unidos, as transmissões de TV do Reino Unido e até as empresas de telecomunicações da Austrália. O problema foi gerado por uma atualização defeituosa do software de segurança cibernética da empresa CloudStrike. E, no momento, ele já está em processo de reparo. E esse problema causou aquela famosa tela azul da morte do Windows. Só que, como ele já está sendo reparado, imaginamos que nas próximas horas tudo já esteja voltado à normalidade. Comenta aqui embaixo se você foi afetado em algum voo que você está fora do país. Que siga o canal até aqui e até a próxima.",
+};

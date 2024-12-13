@@ -69,7 +69,7 @@ const CombinedApp: React.FC = () => {
           model: "gpt-3.5-turbo-instruct",
           prompt: `
             Baseado no texto transcrito abaixo, escreva uma notícia completa com o seguinte formato:
-            sempre deve ter o ### Título ###, ### Subtítulo ### e ### Corpo ###. pois estou esperando em meu código que esses delimitadores estejam presentes.
+            sempre deve ter exatamente o '### Título ###', '### Subtítulo ###' e '### Corpo ###'. pois estou esperando em meu código que esses delimitadores estejam presentes.
             ### Título ###
             [Um título claro e impactante]
   

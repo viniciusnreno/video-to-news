@@ -1,39 +1,51 @@
 import * as React from "react";
 import axios from "axios";
+import { useForm, SubmitHandler } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { schema } from "../../utils/schema";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { getId } from "../../utils/getId";
 
-const VITE_YOUTUBE_API_KEY = import.meta.env.VITE_YOUTUBE_API_KEY;
-const VITE_OPENAI_API_KEY = import.meta.env.VITE_OPENAI_API_KEY;
+interface FormData {
+  youtubeLink: string;
+}
 
 const CombinedApp: React.FC = () => {
-  const [youtubeLink, setYoutubeLink] = React.useState("");
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm<FormData>({
+    resolver: zodResolver(schema),
+  });
+
   const [mp3Url, setMp3Url] = React.useState<string | null>(null);
   const [transcription, setTranscription] = React.useState<string | null>(null);
-  const [news, setNews] = React.useState<string | null>(null);
-  const [loading, setLoading] = React.useState(false);
-
   const [title, setTitle] = React.useState<string | null>(null);
   const [subtitle, setSubtitle] = React.useState<string | null>(null);
   const [body, setBody] = React.useState<string | null>(null);
+  const [loading, setLoading] = React.useState(false);
 
-  const handleConvertToMp3 = async () => {
-    const id = getId(youtubeLink);
+  const handleConvertToMp3: SubmitHandler<FormData> = async (data) => {
+    const id = getId(data.youtubeLink);
     if (!id) {
       alert("Link do YouTube inválido!");
       return;
     }
+
     setLoading(true);
     try {
       const res = await axios.get("https://youtube-mp36.p.rapidapi.com/dl", {
         headers: {
-          "X-RapidAPI-Key": VITE_YOUTUBE_API_KEY,
+          "X-RapidAPI-Key": `${import.meta.env.VITE_YOUTUBE_API_KEY}`,
           "X-RapidAPI-Host": "youtube-mp36.p.rapidapi.com",
         },
         params: { id },
       });
       setMp3Url(res.data.link);
+      reset();
     } catch (err) {
       console.error("Erro ao converter para MP3:", err);
     } finally {
@@ -55,7 +67,7 @@ const CombinedApp: React.FC = () => {
         formData,
         {
           headers: {
-            Authorization: `Bearer ${VITE_OPENAI_API_KEY}`,
+            Authorization: `Bearer ${import.meta.env.VITE_OPENAI_API_KEY}`,
             "Content-Type": "multipart/form-data",
           },
         }
@@ -72,24 +84,23 @@ const CombinedApp: React.FC = () => {
     if (!transcription) return;
     setLoading(true);
     try {
-
       const res = await axios.post(
         "https://api.openai.com/v1/completions",
         {
           model: "gpt-3.5-turbo-instruct",
           prompt: `
             Baseado no texto transcrito abaixo, escreva uma notícia completa com o seguinte formato:
-          title: [Um título claro e impactante]
-          subtitle: [Um subtítulo que resuma os principais pontos]
-          body: [Um corpo com introdução, desenvolvimento e conclusão bem estruturados]
+            title: [Um título claro e impactante]
+            subtitle: [Um subtítulo que resuma os principais pontos]
+            body: [Um corpo com introdução, desenvolvimento e conclusão bem estruturados]
 
-          Texto transcrito: ${'Nessa sexta-feira, dia 19, tivemos um apagão global de tecnologia que afetou os voos dos Estados Unidos, as transmissões de TV do Reino Unido e até as empresas de telecomunicações da Austrália. O problema foi gerado por uma atualização defeituosa do software de segurança cibernética da empresa CloudStrike. E, no momento, ele já está em processo de reparo. E esse problema causou aquela famosa tela azul da morte do Windows. Só que, como ele já está sendo reparado, imaginamos que nas próximas horas, tudo já esteja voltado à normalidade. Comenta aqui embaixo se você foi afetado em algum voo que você está fora do país. Que siga o canal até aqui e até a próxima.'}
+            Texto transcrito: ${transcription}
           `,
           max_tokens: 700,
         },
         {
           headers: {
-            Authorization: `Bearer ${VITE_OPENAI_API_KEY}`,
+            Authorization: `Bearer ${import.meta.env.VITE_OPENAI_API_KEY}`,
           },
         }
       );
@@ -111,19 +122,28 @@ const CombinedApp: React.FC = () => {
     <div className="container mx-auto text-center mt-8 p-4">
       <div className="bg-gray-100 p-10 rounded-lg opacity-90">
         <h1 className="font-bold text-2xl mb-4">YouTube para Notícia</h1>
-        <div className="mb-4">
-          <Input
-            type="text"
-            placeholder="Cole o link do YouTube aqui"
-            value={youtubeLink}
-            onChange={(e) => setYoutubeLink(e.target.value)}
-          />
-          <Button onClick={handleConvertToMp3} disabled={loading}>
-            Converter para MP3
-          </Button>
-        </div>
+        <form onSubmit={handleSubmit(handleConvertToMp3)}>
+          <div className="flex gap-4 items-end justify-center">
+            <div className="grid w-full max-w-sm items-center gap-1.5">
+              <Input
+                type="text"
+                id="youtubeLink"
+                placeholder="Cole o link do YouTube aqui"
+                {...register("youtubeLink")}
+              />
+              {errors.youtubeLink && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.youtubeLink.message}
+                </p>
+              )}
+            </div>
+            <Button type="submit" disabled={loading}>
+              Converter para MP3
+            </Button>
+          </div>
+        </form>
         {mp3Url && (
-          <div>
+          <div className="mt-4">
             <p>MP3 Gerado!</p>
             <Button onClick={handleTranscription} disabled={loading}>
               Transcrever Áudio
@@ -131,7 +151,7 @@ const CombinedApp: React.FC = () => {
           </div>
         )}
         {transcription && (
-          <div>
+          <div className="mt-4">
             <p>Transcrição Concluída!</p>
             <p>{transcription}</p>
             <Button onClick={handleGenerateNews} disabled={loading}>

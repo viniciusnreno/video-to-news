@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useGenerateNews } from "../../utils/useGenerateNews";
 import Loading from "@/components/loading";
+import { getId } from "../../utils/getId";
 
 interface FormData {
   youtubeLink: string;
@@ -20,14 +21,14 @@ const CombinedApp: React.FC = () => {
     resolver: zodResolver(schema),
   });
 
-  const { loading, title, subtitle, body, generateNews } = useGenerateNews();
+  const { loading, title, subtitle, body, image, generateNews } = useGenerateNews();
 
   const handleGenerateNews: SubmitHandler<FormData> = (data) => {
     generateNews(data.youtubeLink);
   };
 
   return (
-    <div className="container mx-auto text-center mt-8 p-4">
+    <div className="container !max-w-[600px] mx-auto text-center mt-8 p-4">
       <div className="bg-gray-100 p-10 rounded-lg opacity-90">
         <h1 className="font-bold text-2xl mb-2">YouTube para Notícia</h1>
         <p className="text-gray-700 mb-6 text-sm">
@@ -56,10 +57,15 @@ const CombinedApp: React.FC = () => {
             )}
           </div>
         </form>
-        {title && subtitle && body && (
+        {title && subtitle && body && image && (
           <div className="mt-4 text-left">
             <h1 className="text-2xl font-bold mb-2">{title}</h1>
             <h2 className="text-base mb-4 text-gray-600">{subtitle}</h2>
+            {image && (
+              <div className="mb-4">
+                <img src={image} alt="Imagem gerada" className="w-full h-auto rounded-lg shadow-md" />
+              </div>
+            )}
             <div className="text-sm text-gray-800 space-y-4">
               {body.split("\n").map((paragraph, index) => (
                 <p key={index}>{paragraph}</p>

@@ -1,41 +1,14 @@
 import { useState } from "react";
 import axios from "axios";
 import { getId } from "./getId";
+import { set } from "react-hook-form";
 
 export const useGenerateNews = () => {
   const [loading, setLoading] = useState(false);
   const [title, setTitle] = useState<string | null>(null);
   const [subtitle, setSubtitle] = useState<string | null>(null);
   const [body, setBody] = useState<string | null>(null);
-  const [image, setImage] = useState<string | null>(null);
-
-  /**
-   * Gera uma imagem usando a API DALL·E
-   * @param prompt - Descrição detalhada para a geração da imagem
-   */
-  const generateImage = async (prompt: string) => {
-    try {
-      const imageRes = await axios.post(
-        "https://api.openai.com/v1/images/generations",
-        {
-          prompt,
-          n: 1,
-          size: "512x512",
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${import.meta.env.VITE_OPENAI_API_KEY}`,
-          },
-        }
-      );
-
-      const imageUrl = imageRes.data.data[0].url;
-      setImage(imageUrl);
-    } catch (err) {
-      console.error("Erro ao gerar imagem:", err);
-      alert("Falha na geração da imagem. Tente novamente mais tarde.");
-    }
-  };
+  const [linkId, setLinkId] = useState<string | null>(null);
 
   /**
    * Gera uma notícia baseada em um link do YouTube
@@ -52,7 +25,7 @@ export const useGenerateNews = () => {
     setTitle(null);
     setSubtitle(null);
     setBody(null);
-    setImage(null);
+    setLinkId(id);
 
     let mp3Url = "";
 
@@ -158,18 +131,7 @@ export const useGenerateNews = () => {
       setLoading(false);
       return;
     }
-
-    try {
-      // Passo 4: Geração de imagem
-      if (generatedTitle && generatedSubtitle) {
-        await generateImage(`${generatedTitle} - ${generatedSubtitle}`);
-      }
-    } catch (err) {
-      console.error("Erro ao gerar imagem:", err);
-    } finally {
-      setLoading(false);
-    }
   };
 
-  return { loading, title, subtitle, body, image, generateNews };
+  return { loading, title, subtitle, body, generateNews, linkId };
 };

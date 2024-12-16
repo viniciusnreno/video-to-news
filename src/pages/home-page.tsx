@@ -1,10 +1,10 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { schema } from "../../utils/schema";
+import { schema } from "../utils/schema";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useGenerateNews } from "../../utils/useGenerateNews";
+import { useGenerateNews } from "@/hooks/useGenerateNews";
 import Loading from "@/components/loading";
 
 interface FormData {
@@ -20,7 +20,13 @@ const CombinedApp: React.FC = () => {
     resolver: zodResolver(schema),
   });
 
-  const { loading, title, subtitle, body, generateNews, linkId } = useGenerateNews();
+  const [loading, setLoading] = React.useState(false);
+  const { loadingRef, title, subtitle, body, generateNews, linkId } = useGenerateNews();
+
+  useEffect(() => {
+    setLoading(loadingRef);
+  }
+  , [loadingRef]);
 
   const handleGenerateNews: SubmitHandler<FormData> = (data) => {
     generateNews(data.youtubeLink);

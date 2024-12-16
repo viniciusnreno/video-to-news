@@ -10,6 +10,7 @@ import News from "@/components/news";
 import Iframe from "@/components/iframe";
 import SavedNews, { NewsData } from "@/components/saved-news";
 import Footer from "@/components/footer";
+import { getId } from "@/utils/getId";
 
 interface FormData {
   youtubeLink: string;
@@ -36,6 +37,7 @@ const CombinedApp: React.FC = () => {
     if (storedNews) {
       setSavedNews(JSON.parse(storedNews));
     }
+    console.log('teste:', getId('https://www.youtube.com/shorts/Bz4A1-3C2Mc'))
   }, []);
 
   useEffect(() => {
@@ -64,7 +66,6 @@ const CombinedApp: React.FC = () => {
   const handleGenerateNews: SubmitHandler<FormData> = (data) => {
     generateNews(data.youtubeLink);
   };
-
   return (
     <>
       <div className="container mx-auto justify-center text-center mt-8 p-4 flex flex-col md:flex-row gap-5 max-w-7xl min-h-screen">

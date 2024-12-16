@@ -11,15 +11,19 @@ export async function generateNews(transcription: string): Promise<{
       {
         model: "gpt-3.5-turbo-instruct",
         prompt: `
-          Baseado no texto transcrito abaixo, escreva uma notícia completa com o seguinte formato:
-           sempre deve ter exatamente o '### Título ###', '### Subtítulo ###' e '### Corpo ###'. pois estou esperando em meu código que esses delimitadores estejam presentes.
-          ### Título ###
-          [Um título claro e impactante]
-          ### Subtítulo ###
-          [Um subtítulo que resuma os principais pontos]
-          ### Corpo ###
-          [Um corpo com introdução, desenvolvimento e conclusão bem estruturados]
-          Texto transcrito: ${transcription}
+Baseado no texto transcrito abaixo, escreva uma notícia completa em formato JSON com a seguinte estrutura EXATA:
+{
+  "title": "[Um título claro e impactante]",
+  "subtitle": "[Um subtítulo que resuma os principais pontos]",
+  "body": "[Um corpo dividido em parágrafos, com cada parágrafo separado pelo marcador '\\n'. Os parágrafos devem ser bem estruturados, como uma notícia real, contendo introdução, desenvolvimento e conclusão.]"
+}
+Certifique-se de que:
+1. O campo "body" tenha parágrafos separados pelo marcador '\\n'.
+2. O JSON retornado seja válido e siga o formato exato especificado acima.
+
+Texto transcrito: ${transcription}
+
+Certifique-se de retornar apenas o JSON válido conforme o exemplo fornecido.
         `,
         max_tokens: 700,
       },
@@ -30,17 +34,29 @@ export async function generateNews(transcription: string): Promise<{
       }
     );
 
-    const rawText = response.data.choices[0].text.trim();
-    const titleMatch = rawText.match(/### Título ###\n(.+?)\n/);
-    const subtitleMatch = rawText.match(/### Subtítulo ###\n(.+?)\n/);
-    const bodyMatch = rawText.match(/### Corpo ###\n([\s\S]+)/);
+    const rawJson = response.data.choices[0].text.trim();
 
+    // Validar se a resposta é um JSON válido
+    let parsedResponse;
+    try {
+      parsedResponse = JSON.parse(rawJson);
+    } catch (err) {
+      console.error("Erro ao parsear o JSON retornado:", rawJson);
+      throw new Error("O modelo retornou um JSON inválido.");
+    }
+
+    // Validar se contém as chaves esperadas
+    const { title, subtitle, body } = parsedResponse;
+    if (!title || !subtitle || !body) {
+      console.error("JSON retornado está incompleto:", parsedResponse);
+      throw new Error("O JSON retornado não contém todas as chaves esperadas.");
+    }
+
+    // Não substituir \n por quebras reais, pois React tratará no componente
     return {
-      title: titleMatch ? titleMatch[1].trim() : "Título não encontrado",
-      subtitle: subtitleMatch
-        ? subtitleMatch[1].trim()
-        : "Subtítulo não encontrado",
-      body: bodyMatch ? bodyMatch[1].trim() : "Corpo da notícia não encontrado",
+      title: title.trim(),
+      subtitle: subtitle.trim(),
+      body: body.trim(), // Mantém o marcador `\n` intacto
     };
   } catch (err) {
     console.error("Erro ao gerar notícia:", err);

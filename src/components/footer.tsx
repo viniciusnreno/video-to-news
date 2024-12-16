@@ -7,7 +7,7 @@ const Footer = () => {
       <Separator />
       <div className="py-5 text-center text-white">
         <p className="text-center">&copy; Vinicius Noronha Renó</p>
-        <p>Feito com: ReactJS NextJS, Shadcn/ui e TailwindCss</p>
+        <p>Feito com: ReactJS, Vite, Shadcn/ui e TailwindCss</p>
       </div>
     </footer>
   );

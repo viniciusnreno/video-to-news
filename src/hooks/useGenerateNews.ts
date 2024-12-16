@@ -34,7 +34,7 @@ export const useGenerateNews = (isTest: boolean) => {
         setSubtitle(subtitle);
         setBody(body);
       } else {
-        setTitle("Notícia: Descoberta Incrível no Mundo da Ciência");
+        setTitle("Descoberta Incrível no Mundo da Ciência");
         setSubtitle(
           "Pesquisadores revelam avanços significativos em tecnologia sustentável"
         );

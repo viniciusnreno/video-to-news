@@ -9,6 +9,7 @@ import Loading from "@/components/loading";
 import News from "@/components/news";
 import Iframe from "@/components/iframe";
 import SavedNews, { NewsData } from "@/components/saved-news";
+import Footer from "@/components/footer";
 
 interface FormData {
   youtubeLink: string;
@@ -27,7 +28,7 @@ const CombinedApp: React.FC = () => {
   const [savedNews, setSavedNews] = useState<NewsData[]>([]);
 
   const { loadingRef, title, subtitle, body, generateNews, linkId } =
-    useGenerateNews(true);
+    useGenerateNews(false);
 
   // Sincroniza o estado com o localStorage ao carregar o componente
   useEffect(() => {
@@ -65,47 +66,49 @@ const CombinedApp: React.FC = () => {
   };
 
   return (
-    <div className="container mx-auto justify-center text-center mt-8 p-4 flex flex-col md:flex-row gap-5 max-w-7xl">
-      {/* Formulário e visualização da notícia gerada */}
-      <div className="bg-gray-300 md:p-10 p-4 rounded-lg opacity-90 md:flex-shrink-0 md:w-7/12">
-        <h1 className="font-bold text-2xl mb-2">YouTube para Notícia</h1>
-        <p className="text-gray-700 mb-6 text-sm">
-          Insira o link de um vídeo do YouTube para transformar o conteúdo em
-          uma notícia bem escrita. <br />
-          O vídeo deve ter no máximo 3 minutos.
-        </p>
-        <form onSubmit={handleSubmit(handleGenerateNews)}>
-          <div className="flex gap-4 items-end justify-center">
-            <div className="grid w-full max-w-sm items-center gap-1.5">
-              <Input
-                type="text"
-                id="youtubeLink"
-                placeholder="Cole o link do YouTube"
-                {...register("youtubeLink")}
-              />
-              {errors.youtubeLink && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.youtubeLink.message}
-                </p>
+    <>
+      <div className="container mx-auto justify-center text-center mt-8 p-4 flex flex-col md:flex-row gap-5 max-w-7xl min-h-screen">
+        <div className="bg-gray-300 md:p-10 p-4 rounded-lg opacity-90 md:flex-shrink-0 md:w-[70%]">
+          <h1 className="font-bold text-2xl mb-2">YouTube para Notícia</h1>
+          <p className="text-gray-700 mb-6 text-sm">
+            Insira o link de um vídeo do YouTube para transformar o conteúdo em
+            uma notícia bem escrita. <br />
+            O vídeo deve ter no máximo 3 minutos.
+          </p>
+          <form onSubmit={handleSubmit(handleGenerateNews)}>
+            <div className="flex gap-4 items-end justify-center">
+              <div className="grid w-full max-w-sm items-center gap-1.5">
+                <Input
+                  type="text"
+                  id="youtubeLink"
+                  placeholder="Cole o link do YouTube"
+                  {...register("youtubeLink")}
+                />
+                {errors.youtubeLink && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors.youtubeLink.message}
+                  </p>
+                )}
+              </div>
+              {loading ? (
+                <Loading />
+              ) : (
+                <Button type="submit">Gerar Notícia</Button>
               )}
             </div>
-            {loading ? (
-              <Loading />
-            ) : (
-              <Button type="submit">Gerar Notícia</Button>
-            )}
-          </div>
-        </form>
+          </form>
 
-        <Iframe linkId={linkId} />
-        <News title={title} subtitle={subtitle} body={body} />
-      </div>
+          <Iframe linkId={linkId} />
+          <News title={title} subtitle={subtitle} body={body} />
+        </div>
 
-      {/* Notícias salvas */}
-      <div className="bg-gray-300 md:p-10 p-4 rounded-lg opacity-90">
-        <SavedNews savedNews={savedNews} />
+        {/* Notícias salvas */}
+        <div className="bg-gray-300 md:p-10 p-4 rounded-lg opacity-90">
+          <SavedNews savedNews={savedNews} />
+        </div>
       </div>
-    </div>
+      <Footer />
+    </>
   );
 };
 

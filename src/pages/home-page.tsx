@@ -6,6 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useGenerateNews } from "@/hooks/useGenerateNews";
 import Loading from "@/components/loading";
+import News from "@/components/news";
+import Iframe from "@/components/iframe";
 
 interface FormData {
   youtubeLink: string;
@@ -61,26 +63,11 @@ const CombinedApp: React.FC = () => {
               <Button type="submit">Gerar Notícia</Button>
             )}
           </div>
+          <span className="font-semibold float-left text-sm ms-2 mt-0.5">O vídeo deve ter no máximo 3 minutos</span>
         </form>
-        {linkId && (
-          <iframe
-            src={`https://www.youtube.com/embed/${linkId}`}
-            title="YouTube Video"
-            className="w-full h-72 rounded-lg shadow-lg mt-6"
-            allowFullScreen
-          ></iframe>
-        )}
-        {title && subtitle && body && (
-          <div className="mt-4 text-left">
-            <h1 className="text-2xl font-bold mb-2">{title}</h1>
-            <h2 className="text-base mb-4 text-gray-600">{subtitle}</h2>
-            <div className="text-sm text-gray-800 space-y-4">
-              {body.split("\n").map((paragraph, index) => (
-                <p key={index}>{paragraph}</p>
-              ))}
-            </div>
-          </div>
-        )}
+
+        <Iframe linkId={linkId} />
+        <News title={title} subtitle={subtitle} body={body} />
       </div>
     </div>
   );

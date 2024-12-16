@@ -6,10 +6,10 @@ import { generateNews } from "@/utils/generateNews";
 
 export const useGenerateNews = () => {
   const [loadingRef, setLoadingRef] = useState(false);
-  const [title, setTitle] = useState<string | null>(null);
-  const [subtitle, setSubtitle] = useState<string | null>(null);
-  const [body, setBody] = useState<string | null>(null);
-  const [linkId, setLinkId] = useState<string | null>(null);
+  const [title, setTitle] = useState<string>("");
+  const [subtitle, setSubtitle] = useState<string>("");
+  const [body, setBody] = useState<string>("");
+  const [linkId, setLinkId] = useState<string>("");
 
   const generateNewsFromYoutube = async (youtubeLink: string) => {
     const id = getId(youtubeLink);
@@ -19,9 +19,9 @@ export const useGenerateNews = () => {
     }
 
     setLoadingRef(true);
-    setTitle(null);
-    setSubtitle(null);
-    setBody(null);
+    setTitle("");
+    setSubtitle("");
+    setBody("");
     setLinkId(id);
 
     try {
